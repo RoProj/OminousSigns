@@ -2,7 +2,7 @@
 
 A data visualisation of the top 100 all-time posts from [r/ScarySigns](https://www.reddit.com/r/ScarySigns/), with each post manually categorised by type of hazard.
 
-**Live site:** https://[your-username].github.io/[your-repo-name]/
+**Live site:** (https://roproj.github.io/OminousSigns/)
 
 ---
 
@@ -27,17 +27,6 @@ A data visualisation of the top 100 all-time posts from [r/ScarySigns](https://w
 - Scroll-reveal filter bar
 - Mobile-friendly dropdown filter
 - Click the title to return to all posts
-
----
-
-## Deployment
-
-This is a single-file static site. To deploy on GitHub Pages:
-
-1. Fork or clone this repo
-2. Go to **Settings → Pages**
-3. Set source to `main` branch, root `/`
-4. Your site will be live at `https://[your-username].github.io/[your-repo-name]/`
 
 ---
 
