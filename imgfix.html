@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>r/ScarySigns — Top 100 Posts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --text: #e0e0e0;
+    --muted: #666;
+    --accent: #ff4444;
+
+    --animals: #4caf7d;
+    --rough: #8b6914;
+    --fire: #e55c00;
+    --water: #1a7fbf;
+    --hazmat: #9c4dcc;
+    --human: #cc3333;
+    --occupational: #b8860b;
+    --climate: #1e7a5e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  header h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  #stats {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .export-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .export-btn:hover { background: #cc0000; }
+
+
+  .filters {
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    position: sticky;
+    top: calc(var(--header-h, 0px) - 1px);
+    background: var(--bg);
+    z-index: 99;
+    transition: transform 0.25s ease;
+  }
+  .filters.hidden-bar {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  .filter-select {
+    display: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: #0e0e0e;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+  .filter-select:focus { outline: none; border-color: #555; }
+
+  @media (max-width: 600px) {
+    .filter-btn { display: none; }
+    .filter-select { display: block; }
+  }
+
+  .filter-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-right: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .filter-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { color: var(--text); border-color: #444; }
+  .filter-btn.active { color: var(--text); border-color: var(--text); background: #1e1e1e; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    padding: 1px;
+  }
+
+  .card {
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.2s;
+  }
+  .card.hidden { display: none; }
+
+  .img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: #111;
+  }
+
+  .img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
+    filter: grayscale(20%) contrast(1.05);
+  }
+  .card:hover .img-wrap img { transform: scale(1.03); }
+
+  .img-wrap .cat-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .img-wrap .img-fail {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex-direction: column;
+    gap: 8px;
+  }
+  .img-wrap .img-fail a { color: #4a9eff; font-size: 10px; }
+
+  .card-body {
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-title {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .card-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .relabel {
+    margin-top: auto;
+  }
+
+  .relabel select {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: #0e0e0e;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .relabel select:focus { outline: none; border-color: #555; }
+
+  /* Category colours */
+  .cat-Animals { background: var(--animals); color: #000; }
+  .cat-Rough { background: var(--rough); color: #fff; }
+  .cat-Fire { background: var(--fire); color: #fff; }
+  .cat-Drowning { background: var(--water); color: #fff; }
+  .cat-Hazmat { background: var(--hazmat); color: #fff; }
+  .cat-Human { background: var(--human); color: #fff; }
+  .cat-Occupational { background: var(--occupational); color: #000; }
+  .cat-Climate { background: var(--climate); color: #fff; }
+  .card.changed
+
+
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1><a href="#" onclick="filter('all', document.querySelector('.filter-btn')); return false;" style="color:inherit;text-decoration:none;">⚠ r/ScarySigns — Ominous Archives</a></h1></div>
+  </div>
+  <div class="header-right">
+
+  </div>
+</header>
+
+<div class="filters">
+  <span class="filter-label">Filter:</span>
+  <select class="filter-select" onchange="filterFromSelect(this)">
+    <option value="all">All (100)</option>
+    <option value="Animals">Animals</option>
+    <option value="Rough Terrain">Rough Terrain</option>
+    <option value="Extreme Climate">Extreme Climate</option>
+    <option value="Fire">Fire</option>
+    <option value="Drowning">Drowning</option>
+    <option value="Hazmat">Hazmat</option>
+    <option value="Human Threat &amp; Crime">Human Threat &amp; Crime</option>
+    <option value="Occupational Safety">Occupational Safety</option>
+  </select>
+  <button class="filter-btn active" onclick="filter('all', this)">All (100)</button>
+  <button class="filter-btn" data-cat="Animals" onclick="filter('Animals', this)">Animals</button>
+  <button class="filter-btn" data-cat="Rough Terrain" onclick="filter('Rough Terrain', this)">Rough Terrain</button>
+  <button class="filter-btn" data-cat="Extreme Climate" onclick="filter('Extreme Climate', this)">Extreme Climate</button>
+  <button class="filter-btn" data-cat="Fire" onclick="filter('Fire', this)">Fire</button>
+  <button class="filter-btn" data-cat="Drowning" onclick="filter('Drowning', this)">Drowning</button>
+  <button class="filter-btn" data-cat="Hazmat" onclick="filter('Hazmat', this)">Hazmat</button>
+  <button class="filter-btn" data-cat="Human Threat & Crime" onclick="filter('Human Threat & Crime', this)">Human Threat &amp; Crime</button>
+  <button class="filter-btn" data-cat="Occupational Safety" onclick="filter('Occupational Safety', this)">Occupational Safety</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+  // Set --header-h so sticky filters sit flush below the header
+  const headerEl = document.querySelector('header');
+  document.documentElement.style.setProperty('--header-h', headerEl.offsetHeight + 'px');
+
+
+const CATEGORIES = [
+  "Animals",
+  "Rough Terrain",
+  "Extreme Climate",
+  "Fire",
+  "Drowning",
+  "Hazmat",
+  "Human Threat & Crime",
+  "Occupational Safety"
+];
+
+const CAT_CLASS = {
+  "Animals": "cat-Animals",
+  "Rough Terrain": "cat-Rough",
+  "Extreme Climate": "cat-Climate",
+  "Fire": "cat-Fire",
+  "Drowning": "cat-Drowning",
+  "Hazmat": "cat-Hazmat",
+  "Human Threat & Crime": "cat-Human",
+  "Occupational Safety": "cat-Occupational"
+};
+
+let posts = [{"title": "Scary-sad, but comforting to know you can be safe.", "image_url": "https://i.redd.it/7hkgml3eklb41.jpg", "upvotes": 34854, "permalink": "https://reddit.com/r/ScarySigns/comments/eqlv6u/scarysad_but_comforting_to_know_you_can_be_safe/", "num_comments": 566, "rank": 1, "categories": ["Human Threat & Crime"]}, {"title": "The scary part is that they must get a lot of people asking for them", "image_url": "https://i.redd.it/vdc8xe4n0s361.jpg", "upvotes": 14225, "permalink": "https://reddit.com/r/ScarySigns/comments/k8hq3i/the_scary_part_is_that_they_must_get_a_lot_of/", "num_comments": 706, "rank": 2, "categories": ["Occupational Safety"]}, {"title": "Trailhead in Tennessee", "image_url": "https://i.redd.it/nk8p3tw2l2941.jpg", "upvotes": 12271, "permalink": "https://reddit.com/r/ScarySigns/comments/ekndnv/trailhead_in_tennessee/", "num_comments": 189, "rank": 3, "categories": ["Rough Terrain"]}, {"title": "Something about this unsettles me", "image_url": "https://i.redd.it/5ck7nhceb1161.jpg", "upvotes": 11928, "permalink": "https://reddit.com/r/ScarySigns/comments/jznjx9/something_about_this_unsettles_me/", "num_comments": 240, "rank": 4, "categories": ["Hazmat"]}, {"title": "Road sign I found in Texas", "image_url": "https://i.redd.it/i5y27jh3ba641.jpg", "upvotes": 11538, "permalink": "https://reddit.com/r/ScarySigns/comments/eeddac/road_sign_i_found_in_texas/", "num_comments": 173, "rank": 5, "categories": ["Human Threat & Crime"]}, {"title": "Took this picture a few years ago in near the border", "image_url": "https://i.redd.it/yhtv58kyr0z41.jpg", "upvotes": 11237, "permalink": "https://reddit.com/r/ScarySigns/comments/gkkrz3/took_this_picture_a_few_years_ago_in_near_the/", "num_comments": 351, "rank": 6, "categories": ["Rough Terrain"]}, {"title": "Percy Preist Lake in Nashville, TN", "image_url": "https://i.redd.it/25zzirpufch41.jpg", "upvotes": 10898, "permalink": "https://reddit.com/r/ScarySigns/comments/f4wex1/percy_preist_lake_in_nashville_tn/", "num_comments": 251, "rank": 7, "categories": ["Drowning"]}, {"title": "Don\u2019t Do Meth", "image_url": "https://i.redd.it/fsjj7ei7ztd01.jpg", "upvotes": 10838, "permalink": "https://reddit.com/r/ScarySigns/comments/7usovx/dont_do_meth/", "num_comments": 280, "rank": 8, "categories": ["Hazmat"]}, {"title": "At a nearby wolf sanctuary", "image_url": "https://i.redd.it/4tavbmfsliw31.jpg", "upvotes": 9675, "permalink": "https://reddit.com/r/ScarySigns/comments/dr4i2f/at_a_nearby_wolf_sanctuary/", "num_comments": 79, "rank": 9, "categories": ["Animals"]}, {"title": "Beware This Microwave", "image_url": "https://i.redd.it/2f9s2xiucs541.jpg", "upvotes": 9367, "permalink": "https://reddit.com/r/ScarySigns/comments/ed9uqr/beware_this_microwave/", "num_comments": 175, "rank": 10, "categories": ["Hazmat"]}, {"title": "Umm", "image_url": "https://i.redd.it/g756f2kh3p041.jpg", "upvotes": 9308, "permalink": "https://reddit.com/r/ScarySigns/comments/e148pr/umm/", "num_comments": 53, "rank": 11, "categories": [null]}, {"title": "A disease which has no cure", "image_url": "https://i.redd.it/jh5wd3ifals31.jpg", "upvotes": 9219, "permalink": "https://reddit.com/r/ScarySigns/comments/dhywwd/a_disease_which_has_no_cure/", "num_comments": 174, "rank": 12, "categories": ["Hazmat"]}, {"title": "Sign a the vet", "image_url": "https://i.redd.it/z2y9dhbkg9541.jpg", "upvotes": 8786, "permalink": "https://reddit.com/r/ScarySigns/comments/ec28bh/sign_a_the_vet/", "num_comments": 173, "rank": 13, "categories": ["Animals"]}, {"title": "\"Emergency medical staff has been infected. We will no longer treat patients. Quarantine underway.\"", "image_url": "https://i.redd.it/x9fev8fc44d41.png", "upvotes": 8449, "permalink": "https://reddit.com/r/ScarySigns/comments/eu5ucy/emergency_medical_staff_has_been_infected_we_will/", "num_comments": 176, "rank": 14, "categories": ["Hazmat"]}, {"title": "Yikes", "image_url": "https://i.redd.it/onqpbvq8uh141.png", "upvotes": 8224, "permalink": "https://reddit.com/r/ScarySigns/comments/e34g9n/yikes/", "num_comments": 83, "rank": 15, "categories": ["Hazmat"]}, {"title": "\u201cWear a mask.\u201d", "image_url": "https://i.redd.it/o6ix6knrlgd41.jpg", "upvotes": 8126, "permalink": "https://reddit.com/r/ScarySigns/comments/ev1hjh/wear_a_mask/", "num_comments": 129, "rank": 16, "categories": ["Hazmat"]}, {"title": "Apparently from Killington Ski Resort.", "image_url": "https://i.redd.it/vv12az3ti9061.jpg", "upvotes": 8075, "permalink": "https://reddit.com/r/ScarySigns/comments/jxbgxk/apparently_from_killington_ski_resort/", "num_comments": 102, "rank": 17, "categories": ["Extreme Climate"]}, {"title": "Is not an emergency yahauh", "image_url": "https://i.redd.it/8f3u4gtnjlo31.jpg", "upvotes": 7696, "permalink": "https://reddit.com/r/ScarySigns/comments/d8sehu/is_not_an_emergency_yahauh/", "num_comments": 63, "rank": 18, "categories": ["Occupational Safety"]}, {"title": "Never posted anything before, because I\u2019ve never had anything to post. Aaaaaand then I saw this.", "image_url": "https://i.redd.it/xi420jh899511.jpg", "upvotes": 7664, "permalink": "https://reddit.com/r/ScarySigns/comments/8snqwe/never_posted_anything_before_because_ive_never/", "num_comments": 207, "rank": 19, "categories": ["Drowning"]}, {"title": "The School Lockdown Song", "image_url": "https://i.redd.it/adkdq06xol211.jpg", "upvotes": 7660, "permalink": "https://reddit.com/r/ScarySigns/comments/8pbej1/the_school_lockdown_song/", "num_comments": 537, "rank": 20, "categories": ["Human Threat & Crime"]}, {"title": "Hikers Beware", "image_url": "https://i.redd.it/f1uaxkq2zde71.jpg", "upvotes": 7547, "permalink": "https://reddit.com/r/ScarySigns/comments/oupafv/hikers_beware/", "num_comments": 68, "rank": 21, "categories": ["Rough Terrain"]}, {"title": "Sign above some clouds I saw while skiing.", "image_url": "https://external-preview.redd.it/EpB_H8Ww2lpoFY8CNA22EoU1SlbL3zlF0XIAtcgxGy0.jpg?auto=webp&s=71429e858c0032dc873f1350c976d5c1ce8db675", "upvotes": 7445, "permalink": "https://reddit.com/r/ScarySigns/comments/ehcco0/sign_above_some_clouds_i_saw_while_skiing/", "num_comments": 88, "rank": 22, "categories": ["Rough Terrain"]}, {"title": "No bees, no oranges", "image_url": "https://i.redd.it/oiwaldp1hyq31.jpg", "upvotes": 7435, "permalink": "https://reddit.com/r/ScarySigns/comments/de6bal/no_bees_no_oranges/", "num_comments": 120, "rank": 23, "categories": ["Animals"]}, {"title": "\u201cHoly water removed temporarily\u201d", "image_url": "https://i.redd.it/6rsp3dtvw3l41.jpg", "upvotes": 7419, "permalink": "https://reddit.com/r/ScarySigns/comments/fej1gj/holy_water_removed_temporarily/", "num_comments": 210, "rank": 24, "categories": ["Hazmat"]}, {"title": "\"The drowning machine\"", "image_url": "https://i.redd.it/9wx6emyszcg41.jpg", "upvotes": 7246, "permalink": "https://reddit.com/r/ScarySigns/comments/f2ey7w/the_drowning_machine/", "num_comments": 71, "rank": 25, "categories": ["Drowning"]}, {"title": "Oh...ok i understand", "image_url": "https://i.redd.it/ikr69x9ewmz31.jpg", "upvotes": 6877, "permalink": "https://reddit.com/r/ScarySigns/comments/dyjlfh/ohok_i_understand/", "num_comments": 31, "rank": 26, "categories": ["Animals"]}, {"title": "This slide", "image_url": "https://i.redd.it/fedkcvj39x641.jpg", "upvotes": 6672, "permalink": "https://reddit.com/r/ScarySigns/comments/efryd6/this_slide/", "num_comments": 87, "rank": 27, "categories": ["Occupational Safety"]}, {"title": "Bush fire rating signs all over Australia", "image_url": "https://i.redd.it/w0n0qi3uef841.jpg", "upvotes": 6640, "permalink": "https://reddit.com/r/ScarySigns/comments/ej3uip/bush_fire_rating_signs_all_over_australia/", "num_comments": 96, "rank": 28, "categories": ["Fire"]}, {"title": "Cute cartoons don\u2019t make creepy messages better", "image_url": "https://i.redd.it/y11e5dx838v41.jpg", "upvotes": 6451, "permalink": "https://reddit.com/r/ScarySigns/comments/g8lvr6/cute_cartoons_dont_make_creepy_messages_better/", "num_comments": 51, "rank": 29, "categories": ["Occupational Safety"]}, {"title": "It sure if this counts, but I just moved my single sister into her apartment last week", "image_url": "https://i.redd.it/b2efyxxa9r961.jpg", "upvotes": 6369, "permalink": "https://reddit.com/r/ScarySigns/comments/krtuh9/it_sure_if_this_counts_but_i_just_moved_my_single/", "num_comments": 106, "rank": 30, "categories": ["Human Threat & Crime"]}, {"title": "Just another day in Alaska", "image_url": "https://i.redd.it/tlifrc8nctq31.jpg", "upvotes": 6342, "permalink": "https://reddit.com/r/ScarySigns/comments/ddvsc3/just_another_day_in_alaska/", "num_comments": 38, "rank": 31, "categories": ["Animals"]}, {"title": "Posted on a hiking trail at a very high waterfall", "image_url": "https://i.redd.it/5lfvd4lnk2q61.jpg", "upvotes": 6258, "permalink": "https://reddit.com/r/ScarySigns/comments/mg4w9q/posted_on_a_hiking_trail_at_a_very_high_waterfall/", "num_comments": 82, "rank": 32, "categories": ["Rough Terrain"]}, {"title": "No worries, 3 layers of glass still remain to protect you from the king of the jungle!", "image_url": "https://i.redd.it/btbt1f9uc6n31.jpg", "upvotes": 6253, "permalink": "https://reddit.com/r/ScarySigns/comments/d5is81/no_worries_3_layers_of_glass_still_remain_to/", "num_comments": 77, "rank": 33, "categories": ["Animals"]}, {"title": "In Alaska", "image_url": "https://i.redd.it/dafhgkyns5z41.jpg", "upvotes": 6240, "permalink": "https://reddit.com/r/ScarySigns/comments/gky6oi/in_alaska/", "num_comments": 88, "rank": 34, "categories": ["Extreme Climate"]}, {"title": "This sign is indeed a very scary sign.", "image_url": "https://i.redd.it/hz4apr3m3cz61.png", "upvotes": 6220, "permalink": "https://reddit.com/r/ScarySigns/comments/nd6b07/this_sign_is_indeed_a_very_scary_sign/", "num_comments": 72, "rank": 35, "categories": ["Animals"]}, {"title": "At my apartment complex", "image_url": "https://i.redd.it/ypi83v3xh8p41.jpg", "upvotes": 6207, "permalink": "https://reddit.com/r/ScarySigns/comments/fpyx39/at_my_apartment_complex/", "num_comments": 174, "rank": 36, "categories": ["Hazmat"]}, {"title": "Watch for jumping sturgeon", "image_url": "https://i.redd.it/4r3m2yh9bag51.jpg", "upvotes": 6121, "permalink": "https://reddit.com/r/ScarySigns/comments/i7jbyp/watch_for_jumping_sturgeon/", "num_comments": 195, "rank": 37, "categories": ["Animals"]}, {"title": "Careful when skiing", "image_url": "https://external-preview.redd.it/VrfLuUJyue2gv_TXRrBt40NIVKx3DRwyiTS7mt3aDT8.jpg?auto=webp&s=c18fd1845801b79929329c66b06f4a46fa838ff4", "upvotes": 6112, "permalink": "https://reddit.com/r/ScarySigns/comments/eguk66/careful_when_skiing/", "num_comments": 81, "rank": 38, "categories": ["Rough Terrain"]}, {"title": "Inside the boy\u2019s bathroom at school", "image_url": "https://i.redd.it/2yv6n23xu1q91.jpg", "upvotes": 5957, "permalink": "https://reddit.com/r/ScarySigns/comments/xnvbt2/inside_the_boys_bathroom_at_school/", "num_comments": 446, "rank": 39, "categories": ["Human Threat & Crime"]}, {"title": "Trust me, I won't", "image_url": "https://i.redd.it/esd1doa1rpt31.jpg", "upvotes": 5919, "permalink": "https://reddit.com/r/ScarySigns/comments/dkkz72/trust_me_i_wont/", "num_comments": 66, "rank": 40, "categories": ["Animals"]}, {"title": "Sign at the local Zoo, what\u2019s the time frame on that replacement?", "image_url": "https://i.redd.it/s3p593w4bcv51.jpg", "upvotes": 5899, "permalink": "https://reddit.com/r/ScarySigns/comments/ji5d7r/sign_at_the_local_zoo_whats_the_time_frame_on/", "num_comments": 93, "rank": 41, "categories": ["Animals"]}, {"title": "On a gas station outside of Valdosta", "image_url": "https://i.redd.it/syy0m4ltzfp31.jpg", "upvotes": 5818, "permalink": "https://reddit.com/r/ScarySigns/comments/dapaw3/on_a_gas_station_outside_of_valdosta/", "num_comments": 171, "rank": 42, "categories": ["Human Threat & Crime"]}, {"title": "Escape is impossible", "image_url": "https://i.redd.it/wqu25wwb4ky41.jpg", "upvotes": 5724, "permalink": "https://reddit.com/r/ScarySigns/comments/gj229d/escape_is_impossible/", "num_comments": 113, "rank": 43, "categories": ["Drowning"]}, {"title": "Warning sign near Peggy's Cove lighthouse. Nova Scotia, Canada.", "image_url": "https://i.redd.it/y99hth6xjmuz.jpg", "upvotes": 5713, "permalink": "https://reddit.com/r/ScarySigns/comments/79c58h/warning_sign_near_peggys_cove_lighthouse_nova/", "num_comments": 81, "rank": 44, "categories": ["Rough Terrain"]}, {"title": "A happy little sign at my work", "image_url": "https://i.redd.it/mss6fvzg7g061.jpg", "upvotes": 5704, "permalink": "https://reddit.com/r/ScarySigns/comments/jxvxe5/a_happy_little_sign_at_my_work/", "num_comments": 48, "rank": 45, "categories": ["Occupational Safety"]}, {"title": "This sign by the entrance to my church.", "image_url": "https://i.redd.it/s7w7zzvrt3d61.jpg", "upvotes": 5690, "permalink": "https://reddit.com/r/ScarySigns/comments/l3el7v/this_sign_by_the_entrance_to_my_church/", "num_comments": 108, "rank": 46, "categories": ["Human Threat & Crime"]}, {"title": "I explored an abandoned mine this weekend. The floor drops down into an abyss past this sign.", "image_url": "https://i.redd.it/vto82r616bv31.jpg", "upvotes": 5690, "permalink": "https://reddit.com/r/ScarySigns/comments/dob6wh/i_explored_an_abandoned_mine_this_weekend_the/", "num_comments": 109, "rank": 47, "categories": ["Rough Terrain"]}, {"title": "Uh oh. Keep out of the danger noodle room", "image_url": "https://i.redd.it/y1k6sj3vjxh71.jpg", "upvotes": 5685, "permalink": "https://reddit.com/r/ScarySigns/comments/p654dv/uh_oh_keep_out_of_the_danger_noodle_room/", "num_comments": 119, "rank": 48, "categories": ["Animals"]}, {"title": "I think I\u2019ll just take the stairs next time...", "image_url": "https://i.redd.it/h89qcsl5pjh41.jpg", "upvotes": 5661, "permalink": "https://reddit.com/r/ScarySigns/comments/f5f7zf/i_think_ill_just_take_the_stairs_next_time/", "num_comments": 55, "rank": 49, "categories": ["Occupational Safety"]}, {"title": "Sign near nuclear plant in NJ", "image_url": "https://i.redd.it/1lfrsoxa7jh61.jpg", "upvotes": 5602, "permalink": "https://reddit.com/r/ScarySigns/comments/lk0pka/sign_near_nuclear_plant_in_nj/", "num_comments": 198, "rank": 50, "categories": ["Hazmat"]}, {"title": "Ok, let's just go to the public pool?", "image_url": "https://i.redd.it/c5ncgbfjr6f61.jpg", "upvotes": 5549, "permalink": "https://reddit.com/r/ScarySigns/comments/lbeyr9/ok_lets_just_go_to_the_public_pool/", "num_comments": 115, "rank": 51, "categories": ["Hazmat"]}, {"title": "If polar bear attacks, you must fight back", "image_url": "https://i.redd.it/dti896vf5kp61.jpg", "upvotes": 5547, "permalink": "https://reddit.com/r/ScarySigns/comments/mec4xf/if_polar_bear_attacks_you_must_fight_back/", "num_comments": 266, "rank": 52, "categories": ["Animals"]}, {"title": "Save the bees", "image_url": "https://i.redd.it/3fiiprz2xau31.jpg", "upvotes": 5520, "permalink": "https://reddit.com/r/ScarySigns/comments/dm04zs/save_the_bees/", "num_comments": 45, "rank": 53, "categories": ["Animals"]}, {"title": "This got dark real quick", "image_url": "https://i.redd.it/rt24pcqw5bd41.jpg", "upvotes": 5520, "permalink": "https://reddit.com/r/ScarySigns/comments/eumtr7/this_got_dark_real_quick/", "num_comments": 78, "rank": 54, "categories": ["Human Threat & Crime"]}, {"title": "Stay out of the water or you\u2019ll get burned.", "image_url": "https://i.redd.it/fxq69auz1rb61.jpg", "upvotes": 5477, "permalink": "https://reddit.com/r/ScarySigns/comments/kyq1ic/stay_out_of_the_water_or_youll_get_burned/", "num_comments": 48, "rank": 55, "categories": ["Fire"]}, {"title": "you don\u2019t know who is lurking here", "image_url": "https://i.redd.it/dx4l1ez0gzq41.jpg", "upvotes": 5472, "permalink": "https://reddit.com/r/ScarySigns/comments/fvc7ys/you_dont_know_who_is_lurking_here/", "num_comments": 99, "rank": 56, "categories": ["Human Threat & Crime"]}, {"title": "Remembering the Black Plague from 1665 in London.", "image_url": "https://i.redd.it/uzm4o7jqq2551.jpg", "upvotes": 5456, "permalink": "https://reddit.com/r/ScarySigns/comments/h9g5pe/remembering_the_black_plague_from_1665_in_london/", "num_comments": 80, "rank": 57, "categories": ["Hazmat"]}, {"title": "Rock Island, Tennesse", "image_url": "https://i.redd.it/o46zrcbt61g71.jpg", "upvotes": 5423, "permalink": "https://reddit.com/r/ScarySigns/comments/p04z5c/rock_island_tennesse/", "num_comments": 106, "rank": 58, "categories": ["Drowning"]}, {"title": "Good to know", "image_url": "https://i.redd.it/jn24gfrnz0j61.jpg", "upvotes": 5408, "permalink": "https://reddit.com/r/ScarySigns/comments/lpn8b1/good_to_know/", "num_comments": 38, "rank": 59, "categories": ["Occupational Safety"]}, {"title": "Fact.", "image_url": "https://i.redd.it/nwyqv14bd3z31.jpg", "upvotes": 5388, "permalink": "https://reddit.com/r/ScarySigns/comments/dxakgk/fact/", "num_comments": 60, "rank": 60, "categories": ["Drowning"]}, {"title": "You get the gist, even without a word of Swedish", "image_url": "https://i.redd.it/bo1akddjbwe41.jpg", "upvotes": 5346, "permalink": "https://reddit.com/r/ScarySigns/comments/eyoxuq/you_get_the_gist_even_without_a_word_of_swedish/", "num_comments": 103, "rank": 61, "categories": ["Occupational Safety"]}, {"title": "At least they give you a choice.", "image_url": "https://i.redd.it/l2oq3vltift31.jpg", "upvotes": 5345, "permalink": "https://reddit.com/r/ScarySigns/comments/djz7ma/at_least_they_give_you_a_choice/", "num_comments": 135, "rank": 62, "categories": ["Human Threat & Crime"]}, {"title": "That\u2019s unsettling", "image_url": "https://i.redd.it/z3r883yx3uc71.jpg", "upvotes": 5318, "permalink": "https://reddit.com/r/ScarySigns/comments/opnv8k/thats_unsettling/", "num_comments": 256, "rank": 63, "categories": ["Human Threat & Crime"]}, {"title": "Crossing a swing bridge in NZ", "image_url": "https://i.redd.it/izj2nu5wcv041.jpg", "upvotes": 5280, "permalink": "https://reddit.com/r/ScarySigns/comments/e1jizk/crossing_a_swing_bridge_in_nz/", "num_comments": 65, "rank": 64, "categories": ["Occupational Safety"]}, {"title": "That\u2019s a nope from me boss", "image_url": "https://i.redd.it/va6eqkidfqz41.jpg", "upvotes": 5253, "permalink": "https://reddit.com/r/ScarySigns/comments/gmpn7v/thats_a_nope_from_me_boss/", "num_comments": 104, "rank": 65, "categories": ["Rough Terrain"]}, {"title": "In Bear Trap Canyon, Montana", "image_url": "https://i.redd.it/5k56cp8rv9b51.jpg", "upvotes": 5180, "permalink": "https://reddit.com/r/ScarySigns/comments/hsgr39/in_bear_trap_canyon_montana/", "num_comments": 45, "rank": 66, "categories": ["Drowning"]}, {"title": "Any questions?", "image_url": "https://i.redd.it/6qnamz1go2a51.jpg", "upvotes": 5137, "permalink": "https://reddit.com/r/ScarySigns/comments/hou70q/any_questions/", "num_comments": 47, "rank": 67, "categories": ["Fire"]}, {"title": "When you buy the old neighborhood drug house.", "image_url": "https://i.redd.it/d28wymj7hox01.jpg", "upvotes": 5131, "permalink": "https://reddit.com/r/ScarySigns/comments/fhfk6k/when_you_buy_the_old_neighborhood_drug_house/", "num_comments": 51, "rank": 68, "categories": ["Hazmat"]}, {"title": "Ryan Dam, Montana.", "image_url": "https://i.redd.it/jmtgng2tma651.jpg", "upvotes": 5130, "permalink": "https://reddit.com/r/ScarySigns/comments/hda604/ryan_dam_montana/", "num_comments": 114, "rank": 69, "categories": ["Drowning"]}, {"title": "Do you know where the bears are?", "image_url": "https://i.redd.it/dsbhqhqmao371.jpg", "upvotes": 5121, "permalink": "https://reddit.com/r/ScarySigns/comments/ntpoen/do_you_know_where_the_bears_are/", "num_comments": 83, "rank": 70, "categories": ["Animals"]}, {"title": "For HOURS", "image_url": "https://i.redd.it/wbtlxitlfvx31.jpg", "upvotes": 5103, "permalink": "https://reddit.com/r/ScarySigns/comments/duc9qh/for_hours/", "num_comments": 53, "rank": 71, "categories": ["Occupational Safety"]}, {"title": "Spotted while delivering food today", "image_url": "https://i.redd.it/qq59alblt4r41.jpg", "upvotes": 5083, "permalink": "https://reddit.com/r/ScarySigns/comments/fvsrdf/spotted_while_delivering_food_today/", "num_comments": 89, "rank": 72, "categories": ["Hazmat"]}, {"title": "At my local park", "image_url": "https://i.redd.it/h1g1kb28oll91.jpg", "upvotes": 5081, "permalink": "https://reddit.com/r/ScarySigns/comments/x4owis/at_my_local_park/", "num_comments": 148, "rank": 73, "categories": ["Human Threat & Crime"]}, {"title": "Become Soup", "image_url": "https://i.redd.it/tzu2vc5pjk2a1.jpg", "upvotes": 5058, "permalink": "https://reddit.com/r/ScarySigns/comments/z66tu3/become_soup/", "num_comments": 91, "rank": 74, "categories": ["Fire"]}, {"title": "More than sad scary, but still", "image_url": "https://i.redd.it/zeuli4z1or061.png", "upvotes": 5049, "permalink": "https://reddit.com/r/ScarySigns/comments/jyxe54/more_than_sad_scary_but_still/", "num_comments": 56, "rank": 75, "categories": ["Human Threat & Crime"]}, {"title": "My buddy took this picture post fire in Australia", "image_url": "https://i.redd.it/fqpgqa85d4n41.jpg", "upvotes": 5035, "permalink": "https://reddit.com/r/ScarySigns/comments/fjurzr/my_buddy_took_this_picture_post_fire_in_australia/", "num_comments": 54, "rank": 76, "categories": ["Extreme Climate"]}, {"title": "When it\u2019s the artist\u2019s time to shine", "image_url": "https://i.redd.it/wdxe4tra7xr51.jpg", "upvotes": 5027, "permalink": "https://reddit.com/r/ScarySigns/comments/j7je1r/when_its_the_artists_time_to_shine/", "num_comments": 108, "rank": 77, "categories": ["Rough Terrain"]}, {"title": "Do I trust the Sign or the Sensor?", "image_url": "https://i.redd.it/skpzw7ms3aq61.jpg", "upvotes": 5002, "permalink": "https://reddit.com/r/ScarySigns/comments/mgwmd4/do_i_trust_the_sign_or_the_sensor/", "num_comments": 125, "rank": 78, "categories": ["Hazmat"]}, {"title": "Slowly puts shovel back in trunk.", "image_url": "https://i.redd.it/dub4juz9t6o31.jpg", "upvotes": 4989, "permalink": "https://reddit.com/r/ScarySigns/comments/d7u9jz/slowly_puts_shovel_back_in_trunk/", "num_comments": 84, "rank": 79, "categories": ["Hazmat"]}, {"title": "That\u2019s reassuring", "image_url": "https://i.redd.it/dvv39vosmyw41.jpg", "upvotes": 4976, "permalink": "https://reddit.com/r/ScarySigns/comments/gdz6ex/thats_reassuring/", "num_comments": 9, "rank": 80, "categories": ["Occupational Safety"]}, {"title": "Was told that i should post it here. Hope you like it", "image_url": "https://i.redd.it/cdkzosc1iob51.png", "upvotes": 4945, "permalink": "https://reddit.com/r/ScarySigns/comments/htnyb9/was_told_that_i_should_post_it_here_hope_you_like/", "num_comments": 34, "rank": 81, "categories": ["Human Threat & Crime"]}, {"title": "Do not hang ANYTHING", "image_url": "https://i.redd.it/cl7lc41usss31.jpg", "upvotes": 4934, "permalink": "https://reddit.com/r/ScarySigns/comments/dih9gq/do_not_hang_anything/", "num_comments": 28, "rank": 82, "categories": ["Occupational Safety"]}, {"title": "Turn back now!", "image_url": "https://i.redd.it/2adtg7uoqbga1.jpg", "upvotes": 4926, "permalink": "https://reddit.com/r/ScarySigns/comments/10tyu5e/turn_back_now/", "num_comments": 154, "rank": 83, "categories": ["Rough Terrain"]}, {"title": "Amazing how saying \u201cwhen\u201d instead of \u201cif\u201d can make such a difference...", "image_url": "https://i.redd.it/7l39g87pga551.jpg", "upvotes": 4926, "permalink": "https://reddit.com/r/ScarySigns/comments/ha5weg/amazing_how_saying_when_instead_of_if_can_make/", "num_comments": 37, "rank": 84, "categories": ["Occupational Safety"]}, {"title": "Scary geese", "image_url": "https://i.redd.it/p3rkupkben061.jpg", "upvotes": 4895, "permalink": "https://reddit.com/r/ScarySigns/comments/jyhav8/scary_geese/", "num_comments": 75, "rank": 85, "categories": ["Animals"]}, {"title": "On sexual offenders doors this Halloween", "image_url": "https://external-preview.redd.it/xjhECTAeHnninFlNel6_5QF46QU2ezPwYnn2haX7mo8.jpg?auto=webp&s=04d91ca21abf7dccf91510d44bded8e761c0a037", "upvotes": 4865, "permalink": "https://reddit.com/r/ScarySigns/comments/dbqo4b/on_sexual_offenders_doors_this_halloween/", "num_comments": 95, "rank": 86, "categories": ["Human Threat & Crime"]}, {"title": "Is that a threat?", "image_url": "https://i.redd.it/wfdlljyj3md41.jpg", "upvotes": 4850, "permalink": "https://reddit.com/r/ScarySigns/comments/even69/is_that_a_threat/", "num_comments": 30, "rank": 87, "categories": ["Rough Terrain"]}, {"title": "The thought of this makes me want to cook at home even more.", "image_url": "https://i.redd.it/kuqh9hdlhph61.jpg", "upvotes": 4830, "permalink": "https://reddit.com/r/ScarySigns/comments/lkn4j5/the_thought_of_this_makes_me_want_to_cook_at_home/", "num_comments": 68, "rank": 88, "categories": ["Occupational Safety"]}, {"title": "How fast is it going to move?", "image_url": "https://i.redd.it/k1h8jdnifhu51.jpg", "upvotes": 4827, "permalink": "https://reddit.com/r/ScarySigns/comments/jfhnov/how_fast_is_it_going_to_move/", "num_comments": 62, "rank": 89, "categories": ["Occupational Safety"]}, {"title": "It\u2019s always a bit scary when the second lowest rating is high ...", "image_url": "https://i.redd.it/fpgjt2y0iow31.jpg", "upvotes": 4820, "permalink": "https://reddit.com/r/ScarySigns/comments/dri8m7/its_always_a_bit_scary_when_the_second_lowest/", "num_comments": 116, "rank": 90, "categories": ["Fire"]}, {"title": "Apartheid-era sign near Johannesburg, South Africa (1953)", "image_url": "https://i.redd.it/5a4aohmytwx51.jpg", "upvotes": 4800, "permalink": "https://reddit.com/r/ScarySigns/comments/jq1sbt/apartheidera_sign_near_johannesburg_south_africa/", "num_comments": 80, "rank": 91, "categories": ["Human Threat & Crime"]}, {"title": "Friend found this on a bike ride", "image_url": "https://i.redd.it/mmnw507i8lq51.jpg", "upvotes": 4761, "permalink": "https://reddit.com/r/ScarySigns/comments/j3ly0j/friend_found_this_on_a_bike_ride/", "num_comments": 72, "rank": 92, "categories": ["Rough Terrain"]}, {"title": "19th century Japanese Tsunami warnings. This one reads: \u201cRemember the calamity of the great tsunamis. Do not build any homes below this point.\u201d", "image_url": "https://i.redd.it/orrbr9u4fbn61.jpg", "upvotes": 4743, "permalink": "https://reddit.com/r/ScarySigns/comments/m60oan/19th_century_japanese_tsunami_warnings_this_one/", "num_comments": 32, "rank": 93, "categories": ["Drowning"]}, {"title": "Oddly poetic sign in Sea Ranch, CA", "image_url": "https://i.redd.it/d2us1hb82qj61.jpg", "upvotes": 4710, "permalink": "https://reddit.com/r/ScarySigns/comments/lsm2n8/oddly_poetic_sign_in_sea_ranch_ca/", "num_comments": 72, "rank": 94, "categories": ["Rough Terrain"]}, {"title": "Very humbling sign posted outside a cemetery in the middle of the woods.", "image_url": "https://i.redd.it/9uhfr4cnebj61.jpg", "upvotes": 4701, "permalink": "https://reddit.com/r/ScarySigns/comments/lqx1kw/very_humbling_sign_posted_outside_a_cemetery_in/", "num_comments": 100, "rank": 95, "categories": ["Rough Terrain"]}, {"title": "Scary Sign in MO", "image_url": "https://i.redd.it/6dbuodh17iv51.jpg", "upvotes": 4697, "permalink": "https://reddit.com/r/ScarySigns/comments/jin72s/scary_sign_in_mo/", "num_comments": 99, "rank": 96, "categories": ["Drowning"]}, {"title": "Casual sign I took a picture of in Cambodia", "image_url": "https://i.redd.it/s1kouu4y4f361.jpg", "upvotes": 4695, "permalink": "https://reddit.com/r/ScarySigns/comments/k7dpyn/casual_sign_i_took_a_picture_of_in_cambodia/", "num_comments": 70, "rank": 97, "categories": ["Hazmat"]}, {"title": "A sign in Hefei. It reads, \u201cearly detection, early report, early quarantine, early diagnosis, early treatment\u201d", "image_url": "https://i.redd.it/ve3uf1v9svj41.jpg", "upvotes": 4685, "permalink": "https://reddit.com/r/ScarySigns/comments/fbe04a/a_sign_in_hefei_it_reads_early_detection_early/", "num_comments": 43, "rank": 98, "categories": ["Hazmat"]}, {"title": "This is also in the basement with no cell reception.", "image_url": "https://i.redd.it/2brwiqi281b51.jpg", "upvotes": 4683, "permalink": "https://reddit.com/r/ScarySigns/comments/hronww/this_is_also_in_the_basement_with_no_cell/", "num_comments": 99, "rank": 99, "categories": ["Occupational Safety"]}, {"title": "Stumbled across this sign in the middle of the woods with my girlfriend. The access road leads to a locked gate. (We were a good hour from our car, and fairly lost at the time.)", "image_url": "https://i.redd.it/d8fn6wemmp241.jpg", "upvotes": 4671, "permalink": "https://reddit.com/r/ScarySigns/comments/e68w4g/stumbled_across_this_sign_in_the_middle_of_the/", "num_comments": 106, "rank": 100, "categories": ["Hazmat"]}];
+
+
+function getCatClass(cat) {
+  return CAT_CLASS[cat] || 'cat-unknown';
+}
+
+function updateStats() {
+  const counts = {};
+  CATEGORIES.forEach(c => counts[c] = 0);
+  posts.slice(0, VISIBLE).forEach(p => {
+    const cats = p.categories || [p.category];
+    cats.forEach(c => { if (counts[c] !== undefined) counts[c]++; });
+  });
+  document.querySelectorAll('.filter-btn[data-cat]').forEach(btn => {
+    const cat = btn.dataset.cat;
+    const n = counts[cat] || 0;
+    btn.textContent = `${cat} (${n})`;
+  });
+  document.querySelectorAll('.filter-select option').forEach(opt => {
+    const cat = opt.value;
+    if (cat === 'all') return;
+    const n = counts[cat] || 0;
+    opt.textContent = `${cat} (${n})`;
+  });
+}
+
+const VISIBLE = 100;
+
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  posts.slice(0, VISIBLE).forEach((post, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.idx = idx;
+    const primaryCat = (post.categories && post.categories[0]) || post.category || '';
+    card.dataset.cat = primaryCat;
+
+    const catClass = getCatClass(primaryCat);
+
+    card.innerHTML = `
+      <div class="img-wrap">
+        <img src="${post.image_url}" alt="" loading="lazy"
+          onerror="this.style.display='none'; this.nextElementSibling.nextElementSibling.style.display='flex'">
+
+        <div class="img-fail">
+          <span>Image unavailable</span>
+          <a href="${post.permalink}" target="_blank">View on Reddit ↗</a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${post.title}</div>
+        <div class="card-meta">↑ ${post.upvotes.toLocaleString()} · ${post.num_comments} comments · <span style="color:#888">rank ${idx+1}</span></div>
+        
+        
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  updateStats();
+}
+
+function getCatColor(cat) {
+  const colors = {
+    "Animals": "#4caf7d", "Rough Terrain": "#8b6914", "Extreme Climate": "#1e7a5e",
+    "Fire": "#e55c00", "Drowning": "#1a7fbf", "Hazmat": "#9c4dcc",
+    "Human Threat & Crime": "#cc3333", "Occupational Safety": "#b8860b"
+  };
+  return colors[cat] || '#555';
+}
+
+function filter(cat, btn) {
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const sel = document.querySelector('.filter-select');
+  if (sel) sel.value = cat;
+
+  document.querySelectorAll('.card').forEach(card => {
+    const idx = parseInt(card.dataset.idx);
+    const cats = posts[idx] ? (posts[idx].categories || [posts[idx].category]) : [];
+    if (cat === 'all' || cats.includes(cat)) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+
+function filterFromSelect(sel) {
+  const cat = sel.value;
+  const btn = document.querySelector(`.filter-btn[data-cat="${cat}"]`) || document.querySelector('.filter-btn');
+  filter(cat, btn);
+}
+
+function exportJSON() {
+  // ensure all posts have categories array
+  posts.forEach(p => { if (!p.categories) p.categories = [p.category]; });
+  const json = JSON.stringify(posts, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'scarysigns_relabelled.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Scroll-reveal for filters bar ────────────────────────────────────────────
+(function() {
+  const filtersEl = document.querySelector('.filters');
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        if (currentScrollY < lastScrollY) {
+          // scrolling UP → show
+          filtersEl.classList.remove('hidden-bar');
+        } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+          // scrolling DOWN (past 80px) → hide
+          filtersEl.classList.add('hidden-bar');
+        }
+        lastScrollY = currentScrollY;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+})();
+
+
+buildGrid();
+
+</script>
+</body>
+</html>
