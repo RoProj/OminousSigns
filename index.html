@@ -526,7 +526,7 @@ function buildGrid() {
     const catClass = getCatClass(primaryCat);
 
     card.innerHTML = `
-      <div class="img-wrap" onclick="openLightbox('${post.image_url.replace(/'/g,"\\'")}', '${post.title.replace(/'/g,"\\'")}', '${post.permalink}')">
+      <div class="img-wrap" data-idx="${idx}" onclick="openLightbox(${idx})">
         <img src="${post.image_url}" alt="" loading="lazy"
           onerror="this.style.display='none'; this.nextElementSibling.nextElementSibling.style.display='flex'">
 
@@ -623,10 +623,11 @@ function exportJSON() {
 
 buildGrid();
 
-function openLightbox(src, title, permalink) {
-  document.getElementById('lightbox-img').src = src;
-  document.getElementById('lightbox-title').textContent = title;
-  document.getElementById('lightbox-link').href = permalink;
+function openLightbox(idx) {
+  const post = posts[idx];
+  document.getElementById('lightbox-img').src = post.image_url;
+  document.getElementById('lightbox-title').textContent = post.title;
+  document.getElementById('lightbox-link').href = post.permalink;
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
