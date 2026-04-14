@@ -281,18 +281,153 @@
     border-radius: 50%;
     flex-shrink: 0;
   }
+  /* ── Lightbox ── */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    display: block;
+  }
+
+  .lightbox-footer {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .lightbox-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    max-width: 600px;
+    text-align: center;
+  }
+
+  .lightbox-reddit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #4a9eff;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .lightbox-reddit:hover { text-decoration: underline; }
+
+  .lightbox-close {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .lightbox-close:hover { color: var(--text); }
+
+  .img-wrap { cursor: zoom-in; }
+
+  .about-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 5px 14px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .about-btn:hover { color: var(--text); border-color: #555; }
+
+  #about-page {
+    display: none;
+    padding: 48px 32px;
+    max-width: 680px;
+  }
+  #about-page.open { display: block; }
+
+  .about-back {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 5px 14px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    margin-bottom: 40px;
+  }
+  .about-back:hover { color: var(--text); border-color: #555; }
+
+  .about-body h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+    margin-top: 32px;
+  }
+  .about-body h2:first-child { margin-top: 0; }
+  .about-body p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
 </style>
 </head>
 <body>
 
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-footer">
+    <span class="lightbox-title" id="lightbox-title"></span>
+    <a class="lightbox-reddit" id="lightbox-link" href="" target="_blank" rel="noopener">View on Reddit ↗</a>
+  </div>
+</div>
+
 <header>
   <div>
-    <h1><a href="#" onclick="filter('all', document.querySelector('.filter-btn')); return false;" style="color:inherit;text-decoration:none;"><span style="font-size:1.3em;vertical-align:middle;line-height:1;">⚠</span> r/ScarySigns — Ominous Archives</a></h1></div>
+    <h1><a href="#" onclick="hideAbout(); filter('all', document.querySelector('.filter-btn')); return false;" style="color:inherit;text-decoration:none;">r/ScarySigns — Ominous Archives</a></h1></div>
   </div>
   <div class="header-right">
-
+    <button class="about-btn" id="about-btn" onclick="showAbout()">About</button>
   </div>
 </header>
+
+<div id="about-page">
+  <div class="about-body">
+    <h2>About This Project</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <h2>The Author</h2>
+    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+    <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+  </div>
+</div>
 
 <div class="filters">
   <span class="filter-label">Filter:</span>
@@ -391,7 +526,7 @@ function buildGrid() {
     const catClass = getCatClass(primaryCat);
 
     card.innerHTML = `
-      <div class="img-wrap">
+      <div class="img-wrap" onclick="openLightbox('${post.image_url.replace(/'/g,"\\'")}', '${post.title.replace(/'/g,"\\'")}', '${post.permalink}')">
         <img src="${post.image_url}" alt="" loading="lazy"
           onerror="this.style.display='none'; this.nextElementSibling.nextElementSibling.style.display='flex'">
 
@@ -487,6 +622,44 @@ function exportJSON() {
 
 
 buildGrid();
+
+function openLightbox(src, title, permalink) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-title').textContent = title;
+  document.getElementById('lightbox-link').href = permalink;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightbox-img').src = '';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+function showAbout() {
+  document.getElementById('about-page').classList.add('open');
+  document.querySelector('.filters').style.display = 'none';
+  document.getElementById('grid').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  const btn = document.getElementById('about-btn');
+  btn.textContent = '← Back';
+  btn.onclick = hideAbout;
+}
+
+function hideAbout() {
+  document.getElementById('about-page').classList.remove('open');
+  document.querySelector('.filters').style.display = '';
+  document.getElementById('grid').style.display = '';
+  const btn = document.getElementById('about-btn');
+  btn.textContent = 'About';
+  btn.onclick = showAbout;
+}
 
 </script>
 </body>
