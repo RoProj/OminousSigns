@@ -2,7 +2,9 @@
 
 A data visualisation of the top 100 all-time posts from [r/ScarySigns](https://www.reddit.com/r/ScarySigns/), with each post manually categorised by type of hazard.
 
-**Live site:** (https://roproj.github.io/OminousSigns/)
+Every aspect of our lives is riddled with risk and danger, even if we don't realise it. Ominous Archives shows us that things could go very wrong very fast. It's a scary world out there and naïveté is deadly.
+
+**Live site:** https://roproj.github.io/OminousSigns/
 
 ---
 
