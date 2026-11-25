@@ -193,3 +193,4 @@ footer { padding: 28px 24px 36px; border-top: 1px solid var(--line); color: var(
 #about-page h1:focus, #grid:focus { outline: none; }
 #show-all { display: flex; margin: 0 auto 64px; min-width: 200px; min-height: 48px; }
 .filtered .grid { padding-bottom: 32px !important; }
+html:not(.kbd) :focus-visible { outline: none; }

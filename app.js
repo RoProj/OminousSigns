@@ -224,6 +224,10 @@ addEventListener('touchmove', e => aim(e.touches[0].clientX, e.touches[0].client
 addEventListener('focusin', e => { if (e.target.matches('.card:focus-visible')) { const r = e.target.getBoundingClientRect(); aim(r.left + r.width / 2, r.top + r.height / 2); } });
 addEventListener('keydown', e => { if (e.key === 'Escape' && !view.open) setLights(false); });
 
+/* focus rings only for people using a keyboard; touch browsers also draw them after scripted focus */
+addEventListener('keydown', e => { if (!e.metaKey && !e.ctrlKey && !e.altKey) document.documentElement.classList.add('kbd'); }, true);
+addEventListener('pointerdown', () => document.documentElement.classList.remove('kbd'), true);
+
 const phone = matchMedia('(max-width: 620px), (max-width: 860px) and (orientation: portrait), (max-height: 520px)');
 phone.addEventListener('change', () => { if (phone.matches) setLights(false); $('quick').inert = !phone.matches && !document.body.classList.contains('stuck'); closeMenu(); syncDD(); layout(); });
 /* ---------- quick filters ---------- */
@@ -255,7 +259,7 @@ addEventListener('keydown', e => {
 
 /* ---------- start ---------- */
 let w = 0; new ResizeObserver(() => { if (grid.clientWidth !== w) { w = grid.clientWidth; layout(); } }).observe(grid);
-fetch('signs.json?v=7').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
+fetch('signs.json?v=8').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
   signs = data;
   buildCards(); buildCats(); apply(); route(); booted = true;
   document.fonts?.ready.then(layout);
