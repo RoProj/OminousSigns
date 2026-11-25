@@ -1,37 +1,15 @@
-# r/ScarySigns — Ominous Archives
+# Ominous Archives
 
-A data visualisation of the top 100 all-time posts from [r/ScarySigns](https://www.reddit.com/r/ScarySigns/), with each post manually categorised by type of hazard.
+100 real warning signs from [r/ScarySigns](https://www.reddit.com/r/ScarySigns/), sorted by what's likely to hurt you.
 
-Every aspect of our lives is riddled with risk and danger, even if we don't realise it. Ominous Archives shows us that things could go very wrong very fast. It's a scary world out there and naïveté is deadly.
+**[See the archive](https://roproj.github.io/OminousSigns/)**
 
-**Live site:** https://roproj.github.io/OminousSigns/
+Nobody puts up a warning for no reason. Someone was hurt, or nearly was, and it ended up on a sign. This collection covers animals, rough terrain, extreme climate, fire, drowning, hazmat, human threat and crime, and occupational safety. One sign was swallowed by a tree, so it has no category.
 
----
+The posts come from the subreddit's top 200 by upvotes. I removed the jokes and sorted the rest by hand. Every sign is transcribed and links to its original post.
 
-## Categories
+## Credit
 
-| Category | Description |
-|---|---|
-| 🔴 Human Threat & Crime | Signs warning of human danger, violence, or criminal activity |
-| 🟢 Animals | Dangerous wildlife, animal attack warnings |
-| 🔵 Drowning | Water hazards, currents, flood risks |
-| 🟠 Fire | Fire danger, burn risk, wildfire warnings |
-| 🟣 Hazmat | Chemical, biological, nuclear, or radiological hazards |
-| 🟤 Rough Terrain | Cliffs, unstable ground, avalanche, extreme trails |
-| 🌲 Extreme Climate | Heat, cold, storm, and weather-related danger |
-| 🟡 Occupational Safety | Workplace and industrial hazard warnings |
+The photos belong to the people who took them. If one is yours and you want it credited or taken down, the contact address is on the About page.
 
----
-
-## Features
-
-- Filter posts by hazard category
-- Scroll-reveal filter bar
-- Mobile-friendly dropdown filter
-- Click the title to return to all posts
-
----
-
-## Data
-
-Posts sourced from Reddit via the public API. Categories manually assigned.
+Design and code © Rohan Projects 2026. All rights reserved. Please don't copy or republish it.
