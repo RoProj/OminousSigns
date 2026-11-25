@@ -259,7 +259,7 @@ addEventListener('keydown', e => {
 
 /* ---------- start ---------- */
 let w = 0; new ResizeObserver(() => { if (grid.clientWidth !== w) { w = grid.clientWidth; layout(); } }).observe(grid);
-fetch('signs.json?v=8').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
+fetch('signs.json?v=10').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
   signs = data;
   buildCards(); buildCats(); apply(); route(); booted = true;
   document.fonts?.ready.then(layout);
