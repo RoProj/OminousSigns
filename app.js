@@ -107,7 +107,7 @@ function show(s) {
   const n = signs.filter(x => x.category === s.category).length;
   $('same').hidden = n < 2; $('same').textContent = cat === s.category ? `Back to ${s.category}` : `More ${s.category} (${n})`; $('same').onclick = () => leaveTo(s.category);
   const all = Object.keys(CATS), nextCat = all[(all.indexOf(cat || s.category) + 1) % all.length];
-  $('end').hidden = i < shown.length - 1; $('end-next').textContent = 'Next: ' + nextCat; $('end-next').onclick = () => leaveTo(nextCat);
+  $('end').hidden = i < shown.length - 1; $('end').firstElementChild.textContent = cat ? "That's the last one." : `That's all ${shown.length}.`; $('end-next').textContent = cat ? 'Next: ' + nextCat : 'Back to the first sign'; $('end-next').onclick = () => cat ? leaveTo(nextCat) : step(-i);
   resetZoom();
   $('pos').textContent = $('bpos').textContent = `${i + 1} of ${shown.length}`;
   $('prev').disabled = $('bprev').disabled = i <= 0; $('next').disabled = $('bnext').disabled = i >= shown.length - 1;
@@ -255,7 +255,7 @@ addEventListener('keydown', e => {
 
 /* ---------- start ---------- */
 let w = 0; new ResizeObserver(() => { if (grid.clientWidth !== w) { w = grid.clientWidth; layout(); } }).observe(grid);
-fetch('signs.json?v=4').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
+fetch('signs.json?v=5').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
   signs = data;
   buildCards(); buildCats(); apply(); route(); booted = true;
   document.fonts?.ready.then(layout);
