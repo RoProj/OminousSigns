@@ -118,7 +118,7 @@ dt { color: var(--soft); white-space: nowrap; } dd { text-align: right; overflow
 .dd, .dd-menu { display: none; }
 .dd { align-items: center; gap: 8px; height: 38px; position: relative; padding: 0 8px 0 10px; background: none; border: 1.5px solid #5c6059; border-radius: 6px; font-size: 15px; font-weight: 700; white-space: nowrap; }
 .dd::after { content: ""; width: 8px; height: 8px; margin: -5px 4px 0 4px; border: solid currentColor; border-width: 0 2px 2px 0; rotate: 45deg; }
-.dd::before { content: ''; position: absolute; inset: -6px 0; }
+.dd::before { content: ''; position: absolute; inset: -8px 0; }
 .dd .ico { width: 24px; height: 24px; margin-left: -3px; }
 .dd[aria-expanded=true] { border-color: var(--text); }
 .dd[aria-expanded=true]::after { rotate: 225deg; margin-top: 4px; }
@@ -137,7 +137,7 @@ dt { color: var(--soft); white-space: nowrap; } dd { text-align: right; overflow
 footer { padding: 28px 24px 36px; border-top: 1px solid var(--line); color: var(--soft); font-size: 15px; }
 
 @media (max-width: 620px), (max-width: 860px) and (orientation: portrait) {
-  :root { --bar: 48px; --gap: 12px; }
+  :root { --bar: 56px; --gap: 12px; }
   header { padding-inline: 14px; }
   .brand { font-size: 16px; } .btn { padding-inline: 11px; font-size: 14px; } header nav { gap: 6px; }
   .hero { padding: 14px 14px 18px; } .hero p { margin-top: 14px; font-size: 15px; line-height: 1.4; } .plate { padding: 44px 24px; } .plate h1 { font-size: 24px; }
@@ -148,7 +148,7 @@ footer { padding: 28px 24px 36px; border-top: 1px solid var(--line); color: var(
   .info { border: 0; padding: 12px 18px 40px; overflow: visible; }
     .empty, footer { padding-inline: 14px; } #about-page { padding: 32px 14px 64px; } #about-page h1 { font-size: 32px; }
   .info-top { min-height: 32px; margin-bottom: 12px; }
-  .list-head { scroll-margin-top: 47px; min-height: 60px; padding: 8px 14px; }
+  .list-head { scroll-margin-top: 55px; min-height: 60px; padding: 8px 14px; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0 14px 40px; --gap: 8px; column-gap: 8px; }
   .card div { padding: 12px; } .card h2 { font-size: 16px; } .card p { font-size: 13px; margin-top: 10px; }
   .info-top, .nav { display: none; }
@@ -182,7 +182,7 @@ footer { padding: 28px 24px 36px; border-top: 1px solid var(--line); color: var(
   .hero { padding-top: 14px; }
 }
 @media (max-width: 620px), (max-width: 860px) and (orientation: portrait), (max-height: 520px) {
-  :root { --bar: 48px; }
+  :root { --bar: 56px; }
   .dd-menu { display: flex; } .dd-on .dd { display: inline-flex; } .dd-on #about-link { display: none; }
 }
 @media (max-width: 400px) { .dd-on.filtered .brand span { display: none; } }
@@ -191,3 +191,5 @@ footer { padding: 28px 24px 36px; border-top: 1px solid var(--line); color: var(
 #back { margin-top: 24px; }
 .on-about #lights { display: none; }
 #about-page h1:focus, #grid:focus { outline: none; }
+#show-all { display: flex; margin: 0 auto 64px; min-width: 200px; min-height: 48px; }
+.filtered .grid { padding-bottom: 32px !important; }

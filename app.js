@@ -232,7 +232,7 @@ $('show-all').onclick = () => { go(''); toResults(); };
 /* phones: once the icon row has scrolled away, the header offers the same filters as a dropdown */
 const dd = $('dd'), menu = $('dd-menu');
 function syncDD() {
-  const on = phone.matches && !$('archive').hidden && $('quick').getBoundingClientRect().bottom <= 48;
+  const on = phone.matches && !$('archive').hidden && $('quick').getBoundingClientRect().bottom <= 56;
   if (on !== document.body.classList.contains('dd-on')) { document.body.classList.toggle('dd-on', on); if (!on) closeMenu(); }
 }
 addEventListener('scroll', hideTip, { passive: true });
@@ -255,7 +255,7 @@ addEventListener('keydown', e => {
 
 /* ---------- start ---------- */
 let w = 0; new ResizeObserver(() => { if (grid.clientWidth !== w) { w = grid.clientWidth; layout(); } }).observe(grid);
-fetch('signs.json?v=5').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
+fetch('signs.json?v=7').then(r => { if (!r.ok) throw r; return r.json(); }).then(data => {
   signs = data;
   buildCards(); buildCats(); apply(); route(); booted = true;
   document.fonts?.ready.then(layout);
